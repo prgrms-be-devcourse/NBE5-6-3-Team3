@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 @Builder
 @AllArgsConstructor
 public class UserSearchRequest {
-    private boolean locked;
+    private Boolean locked;
     private int page;
     private int size;
 
