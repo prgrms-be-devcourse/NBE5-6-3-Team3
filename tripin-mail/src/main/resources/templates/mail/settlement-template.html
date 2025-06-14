@@ -13,42 +13,42 @@
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">국가:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.country}">일본</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${country}">일본</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">전체 예산:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.publicMoney} + ' ' + ${response.curUnit}">50000 JPY</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${publicMoney} + ' ' + ${curUnit}">50000 JPY</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">사용 인원:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.count} + ' 명'">3 명</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${count} + ' 명'">3 명</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">총 지출:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.totalExpense} + ' ' + ${response.curUnit}">36000 JPY</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${totalExpense} + ' ' + ${curUnit}">36000 JPY</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">남은 금액:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.remainMoney} + ' ' + ${response.curUnit}">14000 JPY</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${remainMoney} + ' ' + ${curUnit}">14000 JPY</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">1인당 정산금:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.personalPrice} + ' ' + ${response.curUnit}">12000 JPY</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${personalPrice} + ' ' + ${curUnit}">12000 JPY</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0; border-bottom:1px solid #e2e8f0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">최신 환율:</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.lastestExchangeRate}">9.1</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${lastestExchangeRate}">9.1</span>
     </div>
 
     <div style="margin-bottom:14px; padding:10px 0;">
       <strong style="display:inline-block; width:160px; font-weight:600; color:#3182ce;">환산 금액(1인당):</strong>
-      <span style="font-weight:500; color:#1a202c;" th:text="${response.exchangePersonalPrice} + ' 원'">109200 원</span>
+      <span style="font-weight:500; color:#1a202c;" th:text="${exchangePersonalPrice} + ' 원'">109200 원</span>
     </div>
 
     <div style="margin-top:40px; text-align:center; font-size:13px; color:#888888;">
