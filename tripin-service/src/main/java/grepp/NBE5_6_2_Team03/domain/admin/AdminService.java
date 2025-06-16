@@ -25,16 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminService {
-    // TODO 메서드 명 고치기
     private final UserRepository userRepository;
     private final UserQueryRepository userQueryRepository;
     private final TravelPlanRepository travelPlanRepository;
     private final TravelPlanQueryRepository travelPlanQueryRepository;
 
     public Page<UserInfoResponse> findUsersPage(UserSearchRequest userSearchRequest) {
-        boolean isLocked = userSearchRequest.isLocked();
+        Boolean isLocked = userSearchRequest.getLocked();
         Pageable pageable = userSearchRequest.getPageable();
-        Page<User> lockedUserInfos = userQueryRepository.findUsersByLockStatus(isLocked, pageable);
+        Page<User> lockedUserInfos = userQueryRepository.findUsersPage(isLocked, pageable);
         return lockedUserInfos.map(UserInfoResponse::of);
     }
 
@@ -52,34 +51,26 @@ public class AdminService {
         );
     }
 
-    public boolean isDuplicatedEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-    public boolean isDuplicatedUsername(String username) {
-        return userRepository.findByName(username).isPresent();
-    }
-
     @Transactional
     public void lockUser(Long userId) {
-        User user = findUserAndCheckAdminRole(userId);
+        User user = getModifiableUser(userId);
         user.lock();
     }
 
     @Transactional
     public void unlockUser(Long userId) {
-        User user = findUserAndCheckAdminRole(userId);
+        User user = getModifiableUser(userId);
         user.unlock();
     }
 
     @Transactional
-    public void deleteById(Long userId) {
-        User user = findUserAndCheckAdminRole(userId);
+    public void deleteUserById(Long userId) {
+        User user = getModifiableUser(userId);
         travelPlanRepository.deleteByUserId(userId);
         userRepository.delete(user);
     }
 
-    private User findUserAndCheckAdminRole(Long userId) {
+    private User getModifiableUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ExceptionMessage.USER_NOT_FOUND));
         if(user.isAdmin()) {
@@ -97,6 +88,14 @@ public class AdminService {
 
     public List<CountriesStatisticResponse> getCountriesStatistics() {
         return travelPlanQueryRepository.getCountriesStatistics();
+    }
+
+    public boolean isDuplicatedEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    public boolean isDuplicatedUsername(String username) {
+        return userRepository.findByName(username).isPresent();
     }
 
 }

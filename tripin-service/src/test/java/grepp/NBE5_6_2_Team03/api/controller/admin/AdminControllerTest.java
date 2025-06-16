@@ -40,7 +40,7 @@ class AdminControllerTest {
             .build();
 
         // when
-        ApiResponse<Page<UserInfoResponse>> result = adminController.userInfos(request);
+        ApiResponse<Page<UserInfoResponse>> result = adminController.getUserInfos(request);
 
         // then
         List<UserInfoResponse> content = result.data().getContent();
@@ -67,7 +67,7 @@ class AdminControllerTest {
             .build();
 
         // when
-        ApiResponse<Page<UserInfoResponse>> result = adminController.userInfos(request);
+        ApiResponse<Page<UserInfoResponse>> result = adminController.getUserInfos(request);
 
         // then
         List<UserInfoResponse> content = result.data().getContent();

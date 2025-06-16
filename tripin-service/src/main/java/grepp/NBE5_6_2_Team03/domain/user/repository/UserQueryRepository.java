@@ -34,13 +34,13 @@ public class UserQueryRepository {
                 .fetchOne();
     }
 
-    public Page<User> findUsersByLockStatus(Boolean isLocked, Pageable pageable) {
+    public Page<User> findUsersPage(Boolean isLocked, Pageable pageable) {
 
         BooleanExpression lockStatus = createLockStatusCondition(isLocked);
 
         List<User> users = queryFactory
             .selectFrom(user)
-            .where(lockStatus) // 동적 조건 적용
+            .where(lockStatus)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
