@@ -15,4 +15,8 @@ public enum CurrentUnit {
         this.country = country;
         this.unit = unit;
     }
+
+    public boolean isKRW() {
+        return this.unit.equals("KRW");
+    }
 }

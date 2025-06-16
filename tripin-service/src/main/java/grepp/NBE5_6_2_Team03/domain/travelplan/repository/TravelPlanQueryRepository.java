@@ -7,6 +7,7 @@ import grepp.NBE5_6_2_Team03.api.controller.admin.dto.statistic.CountriesStatist
 import grepp.NBE5_6_2_Team03.api.controller.admin.dto.statistic.MonthlyStatisticResponse;
 import grepp.NBE5_6_2_Team03.domain.travelplan.TravelPlan;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,7 @@ public class TravelPlanQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public TravelPlan getTravelPlanFetchSchedule(Long travelPlanId){
+    public TravelPlan getTravelPlanWithSchedules(Long travelPlanId){
         return queryFactory.selectDistinct(travelPlan)
             .from(travelPlan)
             .leftJoin(travelPlan.travelSchedules, travelSchedule).fetchJoin()

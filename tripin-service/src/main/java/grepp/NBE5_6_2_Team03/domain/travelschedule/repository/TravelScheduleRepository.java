@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface TravelScheduleRepository extends JpaRepository<TravelSchedule, Long> {
 
-    List<TravelSchedule> findByTravelPlan(TravelPlan travelPlan);
-
     @Query("SELECT s FROM TravelSchedule s " +
         "WHERE s.travelPlan = :plan " +
         "ORDER BY s.travelScheduleDate ASC, s.scheduleStatus DESC")

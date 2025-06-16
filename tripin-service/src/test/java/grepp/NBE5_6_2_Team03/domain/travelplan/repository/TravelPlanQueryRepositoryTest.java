@@ -55,7 +55,7 @@ class TravelPlanQueryRepositoryTest {
         expenseRepository.saveAll(List.of(expense, expense2));
 
         //when
-        TravelPlan findTravelPlan = travelPlanQueryRepository.getTravelPlanFetchSchedule(travelPlan.getTravelPlanId());
+        TravelPlan findTravelPlan = travelPlanQueryRepository.getTravelPlanWithSchedules(travelPlan.getTravelPlanId());
 
         //then
         assertThat(findTravelPlan).isNotNull();

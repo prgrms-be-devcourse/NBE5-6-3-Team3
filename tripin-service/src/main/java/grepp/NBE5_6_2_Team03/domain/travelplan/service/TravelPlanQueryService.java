@@ -5,12 +5,14 @@ import grepp.NBE5_6_2_Team03.api.controller.travelplan.dto.response.TravelSchedu
 import grepp.NBE5_6_2_Team03.domain.exchange.service.ExchangeService;
 import grepp.NBE5_6_2_Team03.domain.travelplan.TravelPlan;
 import grepp.NBE5_6_2_Team03.domain.travelplan.repository.TravelPlanQueryRepository;
+import grepp.NBE5_6_2_Team03.domain.travelschedule.ScheduleStatus;
 import grepp.NBE5_6_2_Team03.domain.travelschedule.TravelSchedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,50 +23,42 @@ public class TravelPlanQueryService {
     private final ExchangeService exchangeService;
 
     public TravelPlanAdjustResponse getAdjustmentInfo(Long travelPlanId){
-        TravelPlan travelPlan = planQueryRepository.getTravelPlanFetchSchedule(travelPlanId);
-        List<TravelSchedule> travelSchedules = travelPlan.getTravelSchedules();
+        TravelPlan travelPlan = planQueryRepository.getTravelPlanWithSchedules(travelPlanId);
+        List<TravelSchedule> completedSchedules = travelPlan.getTravelSchedules().stream()
+            .filter(s -> s.getScheduleStatus() == ScheduleStatus.COMPLETED)
+            .collect(Collectors.toList());
 
-        String curUnit = travelPlan.getCountry().getCode();
-        int remainMoney = getRemainMoney(travelPlan.getPublicMoney(), travelSchedules);
-        int personalPrice = getPersonalPrice(remainMoney, travelPlan.getApplicants());
+        String curUnit = travelPlan.getCurrentUnit().getUnit();
+        int sumExpenses = getSumExpenses(completedSchedules);
+        int applicants = travelPlan.getApplicants();
+        int remainMoney = getRemainMoney(travelPlan.getPublicMoney(), completedSchedules);
+
+        int adjustmentAmount = Math.abs(remainMoney);
+        boolean needToPay = remainMoney < 0;
+
+        int lastestExchangeRate = exchangeService.getLatestExchangeRateInt(curUnit);
+        int remainMoneyWon  = travelPlan.getCurrentUnit().isKRW() ? adjustmentAmount : exchangeService.exchangeToWon(curUnit, adjustmentAmount);
+        int remainMoneyForeign = travelPlan.getCurrentUnit().isKRW() ? exchangeService.exchangeToForeign(curUnit, adjustmentAmount) : adjustmentAmount;
+
+        int personalPrice = adjustmentAmount / applicants;
+        int personalPriceWon = travelPlan.getCurrentUnit().isKRW() ? personalPrice : exchangeService.exchangeToWon(curUnit, personalPrice);
+        int personalPriceForeign = travelPlan.getCurrentUnit().isKRW() ? exchangeService.exchangeToForeign(curUnit, personalPrice) : personalPrice;
+
         int rateCompareResult = exchangeService.compareLatestRateToAverageRate(curUnit);
 
-        int latestExchangeRate = exchangeService.getLatestExchangeRateInt(curUnit);
-        int exchangePersonalPrice = exchangeService.exchangeToWon(curUnit, personalPrice);
+        List<TravelScheduleExpenseInfo> expenses = TravelScheduleExpenseInfo.convertBy(completedSchedules);
 
-        List<TravelScheduleExpenseInfo> expenseInfos = TravelScheduleExpenseInfo.convertBy(travelSchedules);
-        return TravelPlanAdjustResponse.of(expenseInfos, travelPlan, getTotalExpenses(travelSchedules), remainMoney, personalPrice, latestExchangeRate, exchangePersonalPrice, curUnit, rateCompareResult);
-    }
-
-    private void validatePrice(TravelPlan plan, int newPayedPrice) {
-        if (getTotalPrice(plan) + newPayedPrice > plan.getPublicMoney()) {
-            throw new IllegalArgumentException("공금이 부족합니다.");
-        }
-    }
-
-    private void validatePriceForEdit(TravelPlan plan, int oldPayedPrice, int newPayedPrice) {
-        int totalSum = getTotalPrice(plan) - oldPayedPrice + newPayedPrice;
-        if (totalSum > plan.getPublicMoney()) {
-            throw new IllegalArgumentException("공금이 부족합니다.");
-        }
+        return TravelPlanAdjustResponse.of(expenses, travelPlan, sumExpenses, lastestExchangeRate, rateCompareResult,
+                                           remainMoneyWon, remainMoneyForeign, needToPay, personalPriceWon, personalPriceForeign);
     }
 
     private int getRemainMoney(int publicMoney, List<TravelSchedule> schedules) {
-        return publicMoney - getTotalExpenses(schedules);
+        return publicMoney - getSumExpenses(schedules);
     }
 
-    private int getTotalExpenses(List<TravelSchedule> schedules) {
+    private int getSumExpenses(List<TravelSchedule> schedules) {
         return schedules.stream()
-            .map(TravelSchedule::getExpense)
-            .mapToInt(Integer::intValue)
+            .mapToInt(TravelSchedule::getExpense)
             .sum();
-    }
-
-    private int getTotalPrice(TravelPlan plan) {
-        return getTotalExpenses(plan.getTravelSchedules());
-    }
-
-    private int getPersonalPrice(int remainMoney, int count) {
-        return remainMoney / count;
     }
 }

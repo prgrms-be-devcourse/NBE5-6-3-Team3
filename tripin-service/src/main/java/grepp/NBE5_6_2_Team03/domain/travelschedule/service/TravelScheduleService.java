@@ -108,8 +108,4 @@ public class TravelScheduleService {
             throw new IllegalArgumentException("여행 일정 날짜는 여행 계획 날짜 안에 포함되어야 합니다.");
         }
     }
-
-    private int getTotalPrice(TravelPlan plan) {
-        return travelScheduleRepository.sumPriceByPlanId(plan.getTravelPlanId());
-    }
 }

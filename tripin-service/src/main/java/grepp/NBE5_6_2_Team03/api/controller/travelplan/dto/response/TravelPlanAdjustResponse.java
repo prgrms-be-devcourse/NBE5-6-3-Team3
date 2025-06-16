@@ -9,48 +9,55 @@ import java.util.List;
 @Getter
 public class TravelPlanAdjustResponse {
 
-    private List<TravelScheduleExpenseInfo> expenses;
-    private String country;
-    private int publicMoney;
-    private int count;
-    private int totalExpense;
-    private int remainMoney;
-    private int personalPrice;
-    private int lastestExchangeRate;
-    private int exchangePersonalPrice;
-    private String curUnit;
-    private int rateCompareResult;
+    private final List<TravelScheduleExpenseInfo> expenses;
+    private final String country;
+    private final String curUnit;
+    private final int publicMoney;
+    private final int applicants;
+    private final int sumExpenses;
+    private final int lastestExchangeRate;
+    private final int rateCompareResult;
+    private final int remainMoneyWon;
+    private final int remainMoneyForeign;
+    private final boolean needToPay;
+    private final int personalPriceWon;
+    private final int personalPriceForeign;
 
     @Builder
-    private TravelPlanAdjustResponse(List<TravelScheduleExpenseInfo> expenses, String country, int publicMoney, int count,
-                                     int totalPrice, int remainMoney, int personalPrice, int lastestExchangeRate, int exchangePersonalPrice, String curUnit, int rateCompareResult) {
+    private TravelPlanAdjustResponse(List<TravelScheduleExpenseInfo> expenses, String country, String curUnit, int publicMoney,
+                                     int applicants, int sumExpenses, int lastestExchangeRate, int rateCompareResult, int remainMoneyWon,
+                                     int remainMoneyForeign, boolean needToPay, int personalPriceWon, int personalPriceForeign) {
         this.expenses = expenses;
         this.country = country;
-        this.publicMoney = publicMoney;
-        this.count = count;
-        this.totalExpense = totalPrice;
-        this.remainMoney = remainMoney;
-        this.personalPrice = personalPrice;
-        this.lastestExchangeRate = lastestExchangeRate;
-        this.exchangePersonalPrice = exchangePersonalPrice;
         this.curUnit = curUnit;
+        this.publicMoney = publicMoney;
+        this.applicants = applicants;
+        this.sumExpenses = sumExpenses;
+        this.lastestExchangeRate = lastestExchangeRate;
         this.rateCompareResult = rateCompareResult;
+        this.remainMoneyWon = remainMoneyWon;
+        this.remainMoneyForeign = remainMoneyForeign;
+        this.needToPay = needToPay;
+        this.personalPriceWon = personalPriceWon;
+        this.personalPriceForeign = personalPriceForeign;
     }
 
-    public static TravelPlanAdjustResponse of(List<TravelScheduleExpenseInfo> expenseInfos, TravelPlan travelPlan, int totalPrice,
-                                              int remainMoney, int personalPrice, int lastestExchangeRate, int exchangePersonalPrice, String curUnit, int rateCompareResult) {
+    public static TravelPlanAdjustResponse of(List<TravelScheduleExpenseInfo> expenseInfos, TravelPlan travelPlan, int sumExpenses, int lastestExchangeRate,
+                                              int rateCompareResult, int remainMoneyWon, int remainMoneyForeign, boolean needToPay, int personalPriceWon, int personalPriceForeign) {
         return TravelPlanAdjustResponse.builder()
-                .expenses(expenseInfos)
-                .country(travelPlan.getCountry().getCountryName())
-                .publicMoney(travelPlan.getPublicMoney())
-                .count(travelPlan.getApplicants())
-                .totalPrice(totalPrice)
-                .personalPrice(personalPrice)
-                .remainMoney(remainMoney)
-                .lastestExchangeRate(lastestExchangeRate)
-                .exchangePersonalPrice(exchangePersonalPrice)
-                .curUnit(curUnit)
-                .rateCompareResult(rateCompareResult)
-                .build();
+            .expenses(expenseInfos)
+            .country(travelPlan.getCountry().getCountryName())
+            .curUnit(travelPlan.getCurrentUnit().getUnit())
+            .publicMoney(travelPlan.getPublicMoney())
+            .applicants(travelPlan.getApplicants())
+            .sumExpenses(sumExpenses)
+            .lastestExchangeRate(lastestExchangeRate)
+            .rateCompareResult(rateCompareResult)
+            .remainMoneyWon(remainMoneyWon)
+            .remainMoneyForeign(remainMoneyForeign)
+            .needToPay(needToPay)
+            .personalPriceWon(personalPriceWon)
+            .personalPriceForeign(personalPriceForeign)
+            .build();
     }
 }
